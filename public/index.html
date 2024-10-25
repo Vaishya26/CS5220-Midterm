@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase CRUD and File Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .response-box {
+      background-color: #343a40;
+      color: #f8f9fa;
+      border: 1px solid #495057;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+    .card {
+      background-color: #343a40;
+      color: #f8f9fa;
+    }
+  </style>
+</head>
+<body class="bg-dark text-light">
+  <div class="container my-5">
+    <h1 class="text-center mb-4">Firebase CRUD and File Management</h1>
+
+    <!-- User CRUD Operations -->
+    <div class="card mb-4">
+      <div class="card-header">User CRUD Operations</div>
+      <div class="card-body">
+        
+        <!-- Create User Form -->
+        <form id="createUserForm">
+          <h5>Create User</h5>
+          <div class="mb-3">
+            <label for="userId" class="form-label">User ID (optional)</label>
+            <input type="text" class="form-control bg-dark text-light" id="userId" placeholder="Enter a custom ID or leave blank">
+          </div>
+          <div class="mb-3">
+            <label for="userName" class="form-label">Name</label>
+            <input type="text" class="form-control bg-dark text-light" id="userName" required>
+          </div>
+          <div class="mb-3">
+            <label for="userEmail" class="form-label">Email</label>
+            <input type="email" class="form-control bg-dark text-light" id="userEmail" required>
+          </div>
+          <div class="mb-3">
+            <label for="userOccupation" class="form-label">Occupation</label>
+            <input type="text" class="form-control bg-dark text-light" id="userOccupation" required>
+          </div>
+          <button type="button" onclick="createUser()" class="btn btn-primary">Create User</button>
+        </form>
+        <div id="createUserResponse" class="response-box"></div>
+
+        <hr>
+
+        <!-- Retrieve User Form -->
+        <h5>Retrieve User by ID</h5>
+        <form id="getUserForm">
+          <div class="mb-3">
+            <label for="retrieveUserId" class="form-label">User ID</label>
+            <input type="text" class="form-control bg-dark text-light" id="retrieveUserId" required>
+          </div>
+          <button type="button" onclick="getUser()" class="btn btn-info">Get User</button>
+        </form>
+        <div id="getUserResponse" class="response-box"></div>
+
+        <hr>
+
+        <!-- Update User Form -->
+        <h5>Update User</h5>
+        <form id="updateUserForm">
+          <div class="mb-3">
+            <label for="updateUserId" class="form-label">User ID</label>
+            <input type="text" class="form-control bg-dark text-light" id="updateUserId" required>
+          </div>
+          <div class="mb-3">
+            <label for="updateUserName" class="form-label">Name</label>
+            <input type="text" class="form-control bg-dark text-light" id="updateUserName">
+          </div>
+          <div class="mb-3">
+            <label for="updateUserEmail" class="form-label">Email</label>
+            <input type="email" class="form-control bg-dark text-light" id="updateUserEmail">
+          </div>
+          <div class="mb-3">
+            <label for="updateUserOccupation" class="form-label">Occupation</label>
+            <input type="text" class="form-control bg-dark text-light" id="updateUserOccupation">
+          </div>
+          <button type="button" onclick="updateUser()" class="btn btn-warning">Update User</button>
+        </form>
+        <div id="updateUserResponse" class="response-box"></div>
+
+        <hr>
+
+        <!-- Delete User Form -->
+        <h5>Delete User</h5>
+        <form id="deleteUserForm">
+          <div class="mb-3">
+            <label for="deleteUserId" class="form-label">User ID</label>
+            <input type="text" class="form-control bg-dark text-light" id="deleteUserId" required>
+          </div>
+          <button type="button" onclick="deleteUser()" class="btn btn-danger">Delete User</button>
+        </form>
+        <div id="deleteUserResponse" class="response-box"></div>
+      </div>
+    </div>
+
+    <!-- File Upload and Retrieval -->
+    <div class="card mb-4">
+      <div class="card-header">File Upload and Retrieval</div>
+      <div class="card-body">
+        
+        <!-- File Upload Form -->
+        <form id="fileUploadForm" enctype="multipart/form-data">
+          <h5>Upload File</h5>
+          <div class="mb-3">
+            <label for="fileInput" class="form-label">Choose file</label>
+            <input type="file" class="form-control bg-dark text-light" id="fileInput" required>
+          </div>
+          <button type="button" onclick="uploadFile()" class="btn btn-success">Upload File</button>
+        </form>
+        <div id="fileUploadResponse" class="response-box"></div>
+
+        <hr>
+
+        <!-- Retrieve File Form -->
+        <h5>Retrieve File by ID</h5>
+        <form id="getFileForm">
+          <div class="mb-3">
+            <label for="fileId" class="form-label">File ID</label>
+            <input type="text" class="form-control bg-dark text-light" id="fileId" required>
+          </div>
+          <button type="button" onclick="getFile()" class="btn btn-info">Get File URL</button>
+        </form>
+        <div id="fileRetrieveResponse" class="response-box"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const baseURL = 'http://localhost:3000/api';
+
+    function displayResponse(data, elementId) {
+      const responseBox = document.getElementById(elementId);
+      responseBox.innerHTML = JSON.stringify(data, null, 2);
+    }
+
+    // CRUD Operations
+    async function createUser() {
+      const id = document.getElementById('userId').value;
+      const name = document.getElementById('userName').value;
+      const email = document.getElementById('userEmail').value;
+      const occupation = document.getElementById('userOccupation').value;
+
+      const requestBody = { id, name, email, occupation };
+
+      const response = await fetch(`${baseURL}/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+
+      const data = await response.json();
+      displayResponse(data, 'createUserResponse');
+    }
+
+    async function getUser() {
+      const userId = document.getElementById('retrieveUserId').value;
+      const response = await fetch(`${baseURL}/users/${userId}`);
+      const data = await response.json();
+      displayResponse(data, 'getUserResponse');
+    }
+
+    async function updateUser() {
+      const userId = document.getElementById('updateUserId').value;
+      const name = document.getElementById('updateUserName').value;
+      const email = document.getElementById('updateUserEmail').value;
+      const occupation = document.getElementById('updateUserOccupation').value;
+
+      const requestBody = { name, email, occupation };
+
+      const response = await fetch(`${baseURL}/users/${userId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+
+      const data = await response.json();
+      displayResponse(data, 'updateUserResponse');
+    }
+
+    async function deleteUser() {
+      const userId = document.getElementById('deleteUserId').value;
+      const response = await fetch(`${baseURL}/users/${userId}`, { method: 'DELETE' });
+      const data = await response.json();
+      displayResponse(data, 'deleteUserResponse');
+    }
+
+    // File Upload and Retrieval
+    async function uploadFile() {
+      const fileInput = document.getElementById('fileInput');
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      const response = await fetch(`${baseURL}/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      displayResponse(data, 'fileUploadResponse');
+    }
+
+    async function getFile() {
+      const fileId = document.getElementById('fileId').value;
+      const response = await fetch(`${baseURL}/file/${fileId}`);
+      const data = await response.json();
+      displayResponse(data, 'fileRetrieveResponse');
+    }
+  </script>
+</body>
+</html>
