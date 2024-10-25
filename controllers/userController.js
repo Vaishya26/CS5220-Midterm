@@ -1,4 +1,3 @@
-// controllers/userController.js
 import { createUser, getAllUsers, getUserById, updateUser, deleteUser } from '../services/userService.js';
 
 // Create User
