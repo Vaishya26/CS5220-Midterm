@@ -1,5 +1,5 @@
 // services/userService.js
-import db from '../config/firebaseConfig.js';
+import {db} from '../config/firebaseConfig.js';
 
 const collectionName = 'users';
 
