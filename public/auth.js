@@ -4,7 +4,7 @@ import { auth } from './firebaseConfig.js';
 auth.onAuthStateChanged((user) => {
   if (user) {
     if (window.location.pathname === '/' || window.location.pathname === '/signup') {
-      window.location.href = '/chatroom';
+      window.location.href = '/dashboard';
     }
   }
 });
@@ -27,7 +27,7 @@ if (window.location.pathname === '/signup') {
         auth.signInWithEmailAndPassword(email, password)
           .then(() => {
             alert('Registration and Login successful!');
-            window.location.href = '/chatroom';
+            window.location.href = '/dashboard';
           })
           .catch((error) => {
             console.error('Error logging in after signup:', error.message);
@@ -51,7 +51,7 @@ if (window.location.pathname === '/') {
     auth.signInWithEmailAndPassword(email, password)
       .then(() => {
         alert('Login successful!');
-        window.location.href = '/chatroom';
+        window.location.href = '/dashboard';
       })
       .catch((error) => {
         console.error('Error logging in:', error.message);

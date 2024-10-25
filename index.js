@@ -39,6 +39,10 @@ app.get('/crud', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'crud.html'));
 });
 
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
