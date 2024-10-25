@@ -2,7 +2,7 @@ import admin from 'firebase-admin';
 import { createRequire } from 'module'; 
 const require = createRequire(import.meta.url);
 
-const serviceAccount = require('/home/abs/adv_web/CS5220-Midterm/config/serviceAccountKey.json');
+const serviceAccount = require('./serviceAccountKey.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
