@@ -1,5 +1,6 @@
 import { auth } from './firebaseConfig.js';
 
+
 // Redirect to /chatroom if the user is already logged in
 auth.onAuthStateChanged((user) => {
   if (user) {
@@ -8,6 +9,13 @@ auth.onAuthStateChanged((user) => {
     }
   }
 });
+
+
+
+
+// Export the sign-in function if needed in other parts of your app
+
+
 
 // Sign Up Logic
 if (window.location.pathname === '/signup') {
@@ -39,6 +47,8 @@ if (window.location.pathname === '/signup') {
         alert(`Error signing up: ${error.message}`);
       });
   });
+
+
 }
 
 // Login Logic
@@ -58,6 +68,27 @@ if (window.location.pathname === '/') {
         alert(`Error logging in: ${error.message}`);
       });
   });
+
+  // GoogleAuthProvider setup
+const provider = new firebase.auth.GoogleAuthProvider();
+
+// Google Sign-In function
+function signInWithGoogle() {
+  auth.signInWithPopup(provider)
+    .then((result) => {
+      const user = result.user;
+      console.log('Google Sign-In successful:', user);
+      window.location.href = '/dashboard'; // Redirect to dashboard on success
+    })
+    .catch((error) => {
+      console.error('Error during Google Sign-In:', error.message);
+      alert(`Error during Google Sign-In: ${error.message}`);
+    });
+}
+
+// Attach the Google Sign-In function to a button in your HTML
+document.getElementById('google-sign-in').addEventListener('click', signInWithGoogle);
+
 }
 
 // Logout Logic for /chatroom
