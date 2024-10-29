@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import userRoutes from './routes/userRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import fileRoutes from './routes/fileRoutes.js';
+import verifyTokenRoutes from './routes/verifyTokenRoutes.js'; // Import the new verify-token route
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -23,6 +24,7 @@ app.use(bodyParser.json());
 app.use('/api', userRoutes);
 app.use('/api', uploadRoutes);  
 app.use('/api', fileRoutes);  
+app.use('/api', verifyTokenRoutes);
 
 // Root endpoint to serve index.html
 app.get('/', (req, res) => {

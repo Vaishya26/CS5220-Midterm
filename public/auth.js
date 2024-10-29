@@ -1,5 +1,32 @@
 import { auth } from './firebaseConfig.js';
 
+// Function to send ID token to backend for verification
+async function verifyTokenWithBackend() {
+  try {
+    const idToken = await auth.currentUser.getIdToken(); // Retrieve the ID token
+
+    const response = await fetch('/api/verify-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken }),
+    });
+
+    // Check if the response is OK (status 200-299)
+    if (!response.ok) {
+      throw new Error(`Failed to verify token with backend. Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Token verified with backend. User ID:', data.uid);
+    console.log('User profile:', data.profile); // Display the user profile if needed
+
+    return data; // Optionally return the UID for further use
+
+  } catch (error) {
+    console.error('Error retrieving or sending ID token:', error);
+  }
+}
+
 
 // Redirect to /chatroom if the user is already logged in
 auth.onAuthStateChanged((user) => {
@@ -35,6 +62,8 @@ if (window.location.pathname === '/signup') {
         auth.signInWithEmailAndPassword(email, password)
           .then(() => {
             alert('Registration and Login successful!');
+            verifyTokenWithBackend(); // Call the function here
+
             window.location.href = '/dashboard';
           })
           .catch((error) => {
@@ -61,6 +90,8 @@ if (window.location.pathname === '/') {
     auth.signInWithEmailAndPassword(email, password)
       .then(() => {
         alert('Login successful!');
+        verifyTokenWithBackend(); // Call the function here
+
         window.location.href = '/dashboard';
       })
       .catch((error) => {
@@ -78,6 +109,7 @@ function signInWithGoogle() {
     .then((result) => {
       const user = result.user;
       console.log('Google Sign-In successful:', user);
+      verifyTokenWithBackend(); // Call the function here
       window.location.href = '/dashboard'; // Redirect to dashboard on success
     })
     .catch((error) => {
@@ -119,3 +151,7 @@ if (window.location.pathname === '/chatroom') {
       });
   });
 }
+
+
+
+
