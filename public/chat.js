@@ -51,3 +51,24 @@ document.getElementById('send-message').addEventListener('click', () => {
     alert('Please enter a message');
   }
 });
+
+
+// Clear All Messages Event
+document.getElementById('clear-chat').addEventListener('click', () => {
+  if (roomName) {
+    // Confirm before deleting all messages
+    if (confirm(`Are you sure you want to clear all messages in Room: ${roomName}?`)) {
+      db.ref(`rooms/${roomName}/messages`).remove()
+        .then(() => {
+          document.getElementById('chat-box').innerHTML = ''; // Clear displayed messages
+          alert('All messages have been cleared.');
+        })
+        .catch((error) => {
+          console.error('Error clearing messages:', error);
+          alert('Failed to clear messages.');
+        });
+    }
+  } else {
+    alert('No room selected.');
+  }
+});
